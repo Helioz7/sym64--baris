@@ -13,12 +13,12 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class AppFixtures extends Fixture
 {
-    private UserPasswordHasherInterface $userPasswordHasher;
+    private UserPasswordHasherInterface $passwordHasher;
     private SluggerInterface $slugger;
 
-    public function __construct(UserPasswordHasherInterface $userPasswordHasher, SluggerInterface $slugger)
+    public function __construct(UserPasswordHasherInterface $passwordHasher, SluggerInterface $slugger)
     {
-        $this->userPasswordHasher = $userPasswordHasher;
+        $this->passwordHasher = $passwordHasher;
         $this->slugger = $slugger;
     }
 
@@ -26,91 +26,85 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create();
 
-        // Création des utilisateurs
-        // Admin
+        // Créer 30 utilisateurs
         $admin = new User();
         $admin->setUsername('admin')
-              ->setFullname($faker->name)
-              ->setEmail('admin@example.com')
-              ->setActivate(true)
-              ->setRoles(['ROLE_ADMIN'])
-              ->setPassword($this->userPasswordHasher->hashPassword($admin, 'admin'))
-              ->setUniqid(uniqid());
+            ->setPassword($this->passwordHasher->hashPassword($admin, 'admin'))
+            ->setRoles(['ROLE_ADMIN'])
+            ->setFullname($faker->name())
+            ->setEmail($faker->unique()->email())
+            ->setUniqid(uniqid())
+            ->setActivate(true);
         $manager->persist($admin);
 
-        // Rédacteurs
-        $redacs = [];
+        // Créer 5 rédacteurs
         for ($i = 1; $i <= 5; $i++) {
             $redac = new User();
-            $redac->setUsername('redac' . $i)
-                  ->setFullname($faker->name)
-                  ->setEmail('redac' . $i . '@example.com')
-                  ->setActivate(true)
-                  ->setRoles(['ROLE_REDAC'])
-                  ->setPassword($this->userPasswordHasher->hashPassword($redac, 'redac' . $i))
-                  ->setUniqid(uniqid());
+            $redac->setUsername("redac$i")
+                ->setPassword($this->passwordHasher->hashPassword($redac, "redac$i"))
+                ->setRoles(['ROLE_REDAC'])
+                ->setFullname($faker->name())
+                ->setEmail($faker->unique()->email())
+                ->setUniqid(uniqid())
+                ->setActivate(true);
             $manager->persist($redac);
-            $redacs[] = $redac; // Stocke les rédacteurs pour les utiliser plus tard
         }
 
-        // Utilisateurs
-        $users = [];
+        // Créer 24 utilisateurs
         for ($i = 1; $i <= 24; $i++) {
             $user = new User();
-            $user->setUsername('user' . $i)
-                 ->setFullname($faker->name)
-                 ->setEmail('user' . $i . '@example.com')
-                 ->setActivate($faker->boolean(75)) // 75% d'activation
-                 ->setRoles(['ROLE_USER'])
-                 ->setPassword($this->userPasswordHasher->hashPassword($user, 'user' . $i))
-                 ->setUniqid(uniqid());
+            $user->setUsername("user$i")
+                ->setPassword($this->passwordHasher->hashPassword($user, "user$i"))
+                ->setRoles(['ROLE_USER'])
+                ->setFullname($faker->name())
+                ->setEmail($faker->unique()->email())
+                ->setUniqid(uniqid())
+                ->setActivate($i % 4 !== 0); // 3 sur 4 actifs
             $manager->persist($user);
-            $users[] = $user; // Stocke les utilisateurs pour les utiliser plus tard
         }
 
-        // Flush pour s'assurer que les utilisateurs sont persistés avant de les utiliser
-        $manager->flush();
-
-        // Création des sections
+        // Créer 6 sections
         $sections = [];
-        for ($i = 1; $i <= 6; $i++) {
+        for ($j = 1; $j <= 6; $j++) {
             $section = new Section();
-            $section->setSectionTitle($faker->sentence(3))
-                    ->setSectionSlug($this->slugger->slug($section->getSectionTitle())->lower())
-                    ->setSectionDetail($faker->paragraph());
+            $section->setSectionTitle($faker->sentence(2))
+                ->setSectionSlug($this->slugger->slug($section->getSectionTitle())->lower())
+                ->setSectionDetail($faker->text());
+
             $manager->persist($section);
-            $sections[] = $section; // Stocke les sections pour les utiliser plus tard
-
-            // Ajout d'articles à la section
-            $articleCount = rand(2, 40); // Nombre d'articles à ajouter à cette section
-            for ($j = 0; $j < $articleCount; $j++) {
-                $article = new Article();
-                
-                // Choisir un auteur aléatoire (Admin ou Rédacteur)
-                $author = $faker->randomElement([$admin] + $redacs);
-
-                // Assurez-vous de récupérer l'ID de l'auteur
-                $article->setUserId($author->getId()); // Passer l'ID de l'auteur
-
-                // Configurer les propriétés de l'article
-                $article->setTitle($faker->sentence(5))
-                        ->setTitleSlug($this->slugger->slug($article->getTitle())->lower())
-                        ->setText($faker->text())
-                        ->setArticleDateCreate($faker->dateTimeBetween('-6 months', 'now'))
-                        ->setPublished($faker->boolean(75));
-
-                // Date de publication si l'article est publié
-                if ($article->isPublished()) {
-                    $article->setArticleDatePosted($faker->dateTimeBetween($article->getArticleDateCreate(), 'now'));
-                }
-
-                // Ajouter l'article à la section
-                $section->addArticle($article);
-                $manager->persist($article);
-            }
+            $sections[] = $section; // Stocker les sections pour les associer aux articles
         }
 
-        // Flush les entités
+        // Créer 160 articles
+        for ($k = 1; $k <= 160; $k++) {
+            $article = new Article();
+            $title = $faker->sentence(6);
+            $article->setTitle($title)
+                ->setTitleSlug($this->slugger->slug($title)->lower())
+                ->setText($faker->text())
+                ->setArticleDateCreate($faker->dateTimeBetween('-6 months', 'now'))
+                ->setPublished($faker->boolean(75)); // 75% de chance d'être publié
+
+            // Si publié, définir une date de publication
+            if ($article->isPublished()) {
+                $article->setArticleDatePosted($faker->dateTimeBetween($article->getArticleDateCreate(), 'now'));
+            }
+
+            // Assigner un auteur aléatoire (admin ou redacteur)
+            $author = $manager->getRepository(User::class)->findOneBy(['roles' => ['ROLE_REDAC']]) 
+                ?? $admin; // Prioriser un rédacteur, sinon l'admin
+            $article->setUser($author);
+
+            // Assigner aléatoirement entre 2 et 40 articles à une section
+            $randomSectionCount = rand(2, 40); // Nombre d'articles à ajouter à une section
+            for ($m = 0; $m < $randomSectionCount; $m++) {
+                $randomSection = $sections[array_rand($sections)];
+                $randomSection->addArticle($article);
+            }
+
+            $manager->persist($article);
+        }
+
         $manager->flush();
     }
 }
