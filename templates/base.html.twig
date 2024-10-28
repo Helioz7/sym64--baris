@@ -1,17 +1,95 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="en">
 
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>{% block title %}Your Title{% endblock %}</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+
+    <!-- Favicons -->
+    <link href="{{ asset('assets/img/favicon.png') }}" rel="icon">
+    <link href="{{ asset('assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/aos/aos.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/glightbox/css/glightbox.min.css') }}" rel="styles
+    <!-- Main CSS File -->
+    <link href="{{ asset('assets/styles/main.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/styles/main.css') }}" rel="stylesheet">
+</head>
+
+<body class="team-page">
+
+    <header id="header" class="header d-flex align-items-center sticky-top">
+        <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+            <a href="{{ path('app_homepage') }}" class="logo d-flex align-items-center">
+                <h1 class="sitename">Active.</h1>
+            </a>
+            <nav id="navmenu" class="navmenu">
+                <ul>
+                    <li><a href="{{ path('app_homepage') }}">Home</a></li>
+                    <li><a href="{{ path('app_about') }}">About</a></li>
+                    <li><a href="{{ path('app_services') }}">Services</a></li>
+                    <li><a href="{{ path('app_portfolio') }}">Portfolio</a></li>
+                    <li><a href="{{ path('app_team') }}" class="active">Team</a></li>
+                    <li><a href="{{ path('app_blog') }}">Blog</a></li>
+                    <li><a href="{{ path('app_contact') }}">Contact</a></li>
+                </ul>
+                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        {% block body %}{% endblock %}
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+    </main>
+
+    <footer id="footer" class="footer light-background">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3 mb-3 mb-md-0">
+                    <div class="widget">
+                        <h3 class="widget-heading">About Us</h3>
+                        <p class="mb-4">There live the blind texts...</p>
+                        <p class="mb-0"><a href="#" class="btn-learn-more">Learn more</a></p>
+                    </div>
+                </div>
+                <!-- Ajoutez d'autres sections de footer ici -->
+            </div>
+            <div class="copyright d-flex flex-column flex-md-row align-items-center justify-content-md-between">
+                <p>© Copyright <strong class="px-1 sitename">Active.</strong> All Rights Reserved</p>
+                <div class="credits">Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a></div>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Vendor JS Files -->
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/php-email-form/validate.js') }}"></script>
+    <script src="{{ asset('vendor/aos/aos.js') }}"></script>
+    <script src="{{ asset('vendor/swiper/swiper-bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/purecounter/purecounter_vanilla.js') }}"></script>
+    <script src="{{ asset('vendor/glightbox/js/glightbox.min.js') }}"></script>
+    <script src="{{ asset('vendor/imagesloaded/imagesloaded.pkgd.min.js') }}"></script>
+    <script src="{{ asset('vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
+
+    <!-- Main JS File -->
+    <script src="{{ asset('controllers/main.js') }}"></script>
+</body>
+
 </html>
