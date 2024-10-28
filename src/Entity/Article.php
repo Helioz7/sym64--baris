@@ -25,9 +25,6 @@ class Article
     #[ORM\Column(length: 162)]
     private ?string $titleSlug = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $text = null;
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $articleDateCreate = null;
 
@@ -42,6 +39,9 @@ class Article
      */
     #[ORM\ManyToMany(targetEntity: Section::class, inversedBy: 'articles')]
     private Collection $Section;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $text = null;
 
     public function __construct()
     {
@@ -95,19 +95,6 @@ class Article
 
         return $this;
     }
-
-    public function getText(): ?string
-    {
-        return $this->text;
-    }
-
-    public function setText(string $text): static
-    {
-        $this->text = $text;
-
-        return $this;
-    }
-
     public function getArticleDateCreate(): ?\DateTimeInterface
     {
         return $this->articleDateCreate;
@@ -164,6 +151,18 @@ class Article
     public function removeSection(Section $section): static
     {
         $this->Section->removeElement($section);
+
+        return $this;
+    }
+
+    public function getText(): ?string
+    {
+        return $this->text;
+    }
+
+    public function setText(string $text): static
+    {
+        $this->text = $text;
 
         return $this;
     }
