@@ -1,7 +1,7 @@
 /**
-* Template Name: Active
-* Template URL: https://bootstrapmade.com/active-bootstrap-website-template/
-* Updated: Aug 07 2024 with Bootstrap v5.3.3
+* Template Name: ZenBlog
+* Template URL: https://bootstrapmade.com/zenblog-bootstrap-blog-template/
+* Updated: Aug 08 2024 with Bootstrap v5.3.3
 * Author: BootstrapMade.com
 * License: https://bootstrapmade.com/license/
 */
@@ -120,102 +120,5 @@
   }
 
   window.addEventListener("load", initSwiper);
-
-  /**
-   * Initiate Pure Counter
-   */
-  new PureCounter();
-
-  /**
-   * Init swiper tabs sliders
-   */
-  function initSwiperTabs() {
-    document
-      .querySelectorAll(".init-swiper-tabs")
-      .forEach(function(swiperElement) {
-        let config = JSON.parse(
-          swiperElement.querySelector(".swiper-config").innerHTML.trim()
-        );
-
-        const dotsContainer = swiperElement
-          .closest("section")
-          .querySelector(".js-custom-dots");
-        if (!dotsContainer) return;
-
-        const customDots = dotsContainer.querySelectorAll("a");
-
-        // Remove the default pagination setting
-        delete config.pagination;
-
-        const swiperInstance = new Swiper(swiperElement, config);
-
-        swiperInstance.on("slideChange", function() {
-          updateSwiperTabsPagination(swiperInstance, customDots);
-        });
-
-        customDots.forEach((dot, index) => {
-          dot.addEventListener("click", function(e) {
-            e.preventDefault();
-            swiperInstance.slideToLoop(index);
-            updateSwiperTabsPagination(swiperInstance, customDots);
-          });
-        });
-
-        updateSwiperTabsPagination(swiperInstance, customDots);
-      });
-  }
-
-  function updateSwiperTabsPagination(swiperInstance, customDots) {
-    const activeIndex = swiperInstance.realIndex;
-    customDots.forEach((dot, index) => {
-      if (index === activeIndex) {
-        dot.classList.add("active");
-      } else {
-        dot.classList.remove("active");
-      }
-    });
-  }
-
-  window.addEventListener("load", initSwiperTabs);
-
-  /**
-   * Initiate glightbox
-   */
-  const glightbox = GLightbox({
-    selector: '.glightbox'
-  });
-
-  /**
-   * Init isotope layout and filters
-   */
-  document.querySelectorAll('.isotope-layout').forEach(function(isotopeItem) {
-    let layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
-    let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
-    let sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
-
-    let initIsotope;
-    imagesLoaded(isotopeItem.querySelector('.isotope-container'), function() {
-      initIsotope = new Isotope(isotopeItem.querySelector('.isotope-container'), {
-        itemSelector: '.isotope-item',
-        layoutMode: layout,
-        filter: filter,
-        sortBy: sort
-      });
-    });
-
-    isotopeItem.querySelectorAll('.isotope-filters li').forEach(function(filters) {
-      filters.addEventListener('click', function() {
-        isotopeItem.querySelector('.isotope-filters .filter-active').classList.remove('filter-active');
-        this.classList.add('filter-active');
-        initIsotope.arrange({
-          filter: this.getAttribute('data-filter')
-        });
-        if (typeof aosInit === 'function') {
-          aosInit();
-        }
-      }, false);
-    });
-
-  });
 
 })();
